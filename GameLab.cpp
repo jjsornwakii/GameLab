@@ -102,8 +102,8 @@ int main() {
 		if (yBullet[nBullet] == 0 && shootMode[nBullet] == 1) {				/// When bullet move to y=0.
 
 			gotoxy(xBullet[nBullet] + 2, yBullet[nBullet]);
-			printf(" ");											/// Bullet will disapeared.
-			cBullet--;												/// Number of Bullet is decreased.
+			printf(" ");								/// Bullet will disapeared.
+			cBullet--;								/// Number of Bullet is decreased.
 			shootMode[nBullet] = 0;
 		}
 		if (shootMode[nBullet] == 1) {					/// Bullet start to move
