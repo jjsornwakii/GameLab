@@ -95,26 +95,25 @@ int main() {
 			ch_auto = ' ';
 		}
 
-		if (nBullet == 5) {   /// select bullet number for moving
-			nBullet = 0;			
-		}
-		nBullet++;
-		if (yBullet[nBullet] == 0 && shootMode[nBullet] == 1) {				/// When bullet move to y=0.
+		for (int i = 1; i <= 5; i++) {
+			if (yBullet[i] == 0 && shootMode[i] == 1) {				/// When bullet move to y=0.
 
-			gotoxy(xBullet[nBullet] + 2, yBullet[nBullet]);
-			printf(" ");								/// Bullet will disapeared.
-			cBullet--;								/// Number of Bullet is decreased.
-			shootMode[nBullet] = 0;
+				gotoxy(xBullet[i] + 2, yBullet[i]);
+				printf(" ");											/// Bullet will disapeared.
+				cBullet--;												/// Number of Bullet is decreased.
+				shootMode[i] = 0;
+			}
+			if (shootMode[i] == 1) {					/// Bullet start to move
+
+				gotoxy(xBullet[i] + 2, --yBullet[i]);
+				printf("o");
+
+				gotoxy(xBullet[i] + 2, yBullet[i] + 1);
+				printf(" ");
+
+			}
+			d_ship(x, y);
 		}
-		if (shootMode[nBullet] == 1) {					/// Bullet start to move
-			
-			gotoxy(xBullet[nBullet] + 2, --yBullet[nBullet]);
-			printf("o");
-			
-			gotoxy(xBullet[nBullet] + 2, yBullet[nBullet] + 1);
-			printf(" ");
-		}
-		d_ship(x, y);
 		Sleep(50);
 	} while (ch != 'x');
 	return 0;
