@@ -3,10 +3,13 @@
 #include <conio.h>
 #include <stdbool.h>
 #include <time.h>
+#include <thread>
+#include <iostream>
+
 char cursor(int x, int y) {
 	HANDLE hStd = GetStdHandle(STD_OUTPUT_HANDLE);
-	char buf[2]; 
-	COORD c = { x,y }; 
+	char buf[2];
+	COORD c = { x,y };
 	DWORD num_read;
 	if (!ReadConsoleOutputCharacter(hStd, (LPTSTR)buf, 1, c, (LPDWORD)&num_read))
 		return '\0';
@@ -43,22 +46,29 @@ void setcolor(int fg, int bg) {                                                 
 void e_ship(int x, int y) {
 	//system("cls");
 	gotoxy(x - 1, y);                                                             // erase trace
-	printf("      ");
+	setcolor(3, 0);
+	printf("       ");
 }
 void d_ship(int x, int y) {
+	setcolor(3, 0);
+	gotoxy(x-3, y);
+	printf("        ");
+	setcolor(3, 1);
 	gotoxy(x, y);                                                                 // draw ship
 	printf("<-0->");
 }
+
 int checkstarX[21], checkstarY[21];
 void rand_star(int star) {
-	
-	int i, k = 0,ch1=0;
+
+	int i, k = 0, ch1 = 0;
 	for (i = 0; i < star; i++) {
-		
+
 		checkstarX[i] = 9 + rand() % (69 - 9);
 		checkstarY[i] = 1 + rand() % (4 - 1);
 		if (cursor(checkstarX[i], checkstarY[i]) != '*') {
 			gotoxy(checkstarX[i], checkstarY[i]);
+			setcolor(3, 0);
 			printf("*");
 			gotoxy(0, i);
 			//printf("%d %d %d",i, checkstarX[i], checkstarY[i]);	
@@ -68,14 +78,17 @@ void rand_star(int star) {
 		}
 	}
 }
+void beep() {
+	Beep(700,500);
+}
 int main() {
 
 	srand(time(NULL));
-	setcolor(3, 1);
-	system("cls");
 	
-	char ch = ' ', ch_auto = ' '; 
-	int i=0;
+	//system("cls");
+
+	char ch = ' ', ch_auto = ' ';
+	int i = 0;
 	int x = 38, y = 20;
 	int shootMode[7] = { 0,0,0,0,0,0,0 }, bullet[7] = { 0,0,0,0,0,0,0 };
 	int cBullet = 0, nBullet = 0;
@@ -129,15 +142,14 @@ int main() {
 		else {
 			ch_auto = ' ';
 		}
-		//if (cBullet > 0)
-			//Beep(700, 50);
 
 		for (int i = 1; i <= 5; i++) {
-			
+
 
 			if (yBullet[i] == 0 && shootMode[i] == 1) {				/// When bullet move to y=0.
 
 				gotoxy(xBullet[i] + 2, yBullet[i]);
+				setcolor(3, 0);
 				printf(" ");											/// Bullet will disapeared.
 				cBullet--;												/// Number of Bullet is decreased.
 				shootMode[i] = 0;
@@ -146,23 +158,29 @@ int main() {
 			if (shootMode[i] == 1) {					/// Bullet start to move
 				if (cursor(xBullet[i] + 2, yBullet[i] - 1) == '*') {
 					shootMode[i] = 0;
-					gotoxy(xBullet[i] + 2, yBullet[i] );
+					gotoxy(xBullet[i] + 2, yBullet[i]);
+					setcolor(3, 0);
 					printf(" ");
-					gotoxy(xBullet[i] + 2, yBullet[i]-1);
+					gotoxy(xBullet[i] + 2, yBullet[i] - 1);
+					setcolor(3, 0);
 					printf(" ");
 					cBullet--;
-					Beep(500, 20);
+					std::thread q(Beep, 500, 200);
+					q.detach();
 					score++;
-						rand_star(1);
+					rand_star(1);
 					break;
-					
+
 				}
+			
 				gotoxy(xBullet[i] + 2, --yBullet[i]);
-				printf("o");
+				setcolor(3, 2);
+				printf("^");
 
 				gotoxy(xBullet[i] + 2, yBullet[i] + 1);
+				setcolor(3, 0);
 				printf(" ");
-				
+			
 			}
 			
 			d_ship(x, y);
@@ -171,8 +189,8 @@ int main() {
 		gotoxy(cols - 5, 0);
 		printf("SCORE : %d", score);
 		Sleep(50);
-			
+
 	} while (ch != 'x');
-	
+
 	return 0;
 }
